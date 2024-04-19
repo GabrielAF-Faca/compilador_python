@@ -1,0 +1,6 @@
+
+void main() {
+    int x=0;
+    float y,z=2.5;
+    char a = 'a';
+}
