@@ -1,14 +1,12 @@
 from afd import AFD
 
-import json
-
-afd = AFD('./automato_config3.txt', './')
+afd = AFD('./automato_config4.txt', './')
 
 with open('./input3.txt', 'r') as file:
 
+    index = 1
     for linha in file.readlines():
         linha = linha.strip()
-        afd.exec(linha)
+        afd.exec(linha, index)
+        index += 1
         print()
-
-    print(json.dumps(afd.tabela_simbolos, indent=4))

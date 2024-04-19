@@ -21,6 +21,7 @@ class AFD:
     def __init__(self, config_path, save_path):
 
         self.save_path = save_path
+        self.ref_stack = []
 
         self.tabela_simbolos = {}
 
@@ -93,7 +94,7 @@ class AFD:
 
         return token, None
 
-    def exec(self, afd_input):
+    def exec(self, afd_input, line):
         if not len(afd_input):
             return
 
@@ -114,6 +115,7 @@ class AFD:
 
             else:
                 try:
+                    print(self.actual_state)
                     tabela.append((char_stack, self.final_states[self.actual_state]))
                 except KeyError:
                     print(f"{afd_input} -> Não reconhecido")
@@ -121,7 +123,7 @@ class AFD:
 
                 self.actual_state = self.states[0]
                 char_stack = ""
-]
+
                 if c != ' ':
                     continue
 
@@ -139,10 +141,20 @@ class AFD:
             raise NotFinalStateError(self.actual_state, afd_input)
 
         for e in tabela:
+            ref = None
             tabela_id = len(self.tabela_simbolos) + 1
+
+            if e[1] in ['apar', 'ach', 'acol']:
+                self.ref_stack.append(tabela_id)
+
+            elif e[1] in ['fpar', 'fch', 'fcol']:
+                ref = self.ref_stack.pop()
+
             self.tabela_simbolos[tabela_id] = {
                 'token': e[0],
-                'tipo': e[1]
+                'tipo': e[1],
+                'linha': line,
+                'ref': ref
             }
 
         with open(f'{self.save_path}/tabela_simbolos.json', 'w', encoding='utf8') as file:
