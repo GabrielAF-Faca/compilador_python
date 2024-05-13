@@ -1,6 +1,6 @@
-
-void main() {
-    if ((a >= b) && (c < d)) {
-        imprime(a);
-    }
-}
+int x;
+int y = 0;
+float a,b=0.0,c;
+if(y>0){int x=0;}
+if(y>0){int x=0;}else{int x=1;}
+for(int x = 0; x < 10; x++){x=0;}

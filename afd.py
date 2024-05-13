@@ -33,7 +33,20 @@ class AFD:
             self.actual_state = self.states[0]
             self.state_indexes = dict([(state, []) for state in self.states])
 
-            finals = file.readline().strip().split(',')
+            finals = ''
+
+            flag = True
+
+            while flag:
+                finals_line = file.readline().strip()
+
+                if not finals_line.endswith('\\'):
+                    flag = False
+
+                finals_line = finals_line.rstrip('\\')
+                finals += f'{finals_line},'
+
+            finals = finals.rstrip(',').split(',')
 
             for state in finals:
 
@@ -84,6 +97,8 @@ class AFD:
                     'tokens': ttokens,
                     'fstate': fstate
                 })
+
+            print(self.state_indexes)
 
     def find_transition(self, token):
 
@@ -148,7 +163,11 @@ class AFD:
                 self.ref_stack.append(tabela_id)
 
             elif e[1] in ['fpar', 'fch', 'fcol']:
-                ref = self.ref_stack.pop()
+                try:
+                    ref = self.ref_stack.pop()
+                except IndexError:
+                    print(f"Erro! Não fechou alguma coisa")
+                    return None
 
             self.tabela_simbolos[tabela_id] = {
                 'token': e[0],
@@ -156,6 +175,12 @@ class AFD:
                 'linha': line,
                 'ref': ref
             }
+
+    def save_output(self):
+        if len(self.ref_stack) > 0:
+            t = self.tabela_simbolos[self.ref_stack[0]]
+            print(f'Erro! "{t["token"]}" linha {t["linha"]}')
+            return None
 
         with open(f'{self.save_path}/tabela_simbolos.json', 'w', encoding='utf8') as file:
             file.write(json.dumps(self.tabela_simbolos, indent=4))
